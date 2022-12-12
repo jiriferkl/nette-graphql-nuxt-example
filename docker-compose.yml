@@ -1,0 +1,21 @@
+services:
+  php:
+    image: php:8.2.0-fpm
+    networks:
+      - backend
+    volumes:
+      - ./backend/:/var/www/html/
+
+  nginx:
+    build:
+      context: .docker/nginx
+    ports:
+      - "8080:80"
+    networks:
+      - backend
+    volumes:
+      - ./backend/:/var/www/html/
+
+networks:
+  backend:
+    driver: bridge
