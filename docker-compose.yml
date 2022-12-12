@@ -1,6 +1,7 @@
 services:
   php:
-    image: php:8.2.0-fpm
+    build:
+      context: .docker/php
     networks:
       - backend
     volumes:
