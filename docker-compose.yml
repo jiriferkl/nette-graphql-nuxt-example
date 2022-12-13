@@ -1,5 +1,13 @@
 services:
-  php:
+  php1:
+    build:
+      context: .docker/php
+    networks:
+      - backend
+    volumes:
+      - ./backend/:/var/www/html/
+
+  php2:
     build:
       context: .docker/php
     networks:
