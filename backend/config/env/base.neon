@@ -1,3 +1,8 @@
 includes:
+	- ../app/commands.neon
 	- ../app/controllers.neon
+	- ../app/model.neon
+	- ../app/resolvers.neon
 	- ../ext/apitte.neon
+	- ../ext/console.neon
+	- ../ext/database.neon

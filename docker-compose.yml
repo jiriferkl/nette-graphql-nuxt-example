@@ -31,6 +31,18 @@ services:
     volumes:
       - ./backend/:/var/www/html/
 
+  db:
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    networks:
+      - backend
+    volumes:
+      - ./.docker/temp/db:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: georgina
+
 networks:
   backend:
     driver: bridge

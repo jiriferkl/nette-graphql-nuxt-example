@@ -1,0 +1,4 @@
+database:
+	dsn: 'mysql:host=db;dbname=georgina'
+	user: root
+	password: root

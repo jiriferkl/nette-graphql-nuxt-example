@@ -12,6 +12,7 @@ final class Bootstrap
 	{
 		$configurator = new ExtraConfigurator();
 		$configurator->setEnvDebugMode();
+		$configurator->setTimeZone('Europe/Prague');
 
 		$configurator->enableTracy(__DIR__ . '/../log');
 		$configurator->setTempDirectory(__DIR__ . '/../temp');

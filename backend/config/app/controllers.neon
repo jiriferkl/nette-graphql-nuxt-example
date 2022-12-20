@@ -1,2 +1,2 @@
 services:
-	- App\Controller\GraphqlController
+	- App\Module\Controller\GraphqlController

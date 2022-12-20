@@ -1,0 +1,5 @@
+services:
+	- App\Model\Resolver\Query\ProductQueryResolver
+	- App\Model\Resolver\Query\ProductsQueryResolver
+
+	- App\Model\Resolver\Type\ProductTypeResolver

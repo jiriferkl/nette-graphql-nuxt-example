@@ -1,0 +1,16 @@
+parameters:
+	level: max
+	tmpDir: temp/phpstan
+	paths:
+		- ../app
+		- ../qa
+	excludePaths:
+		- ../qa/temp
+
+rules:
+	- Qa\Rule\ResolverInterfaceShouldBeRegisteredService
+
+services:
+	-
+		class: Qa\ContainerResolver
+		arguments: [qa/container-loader.php]

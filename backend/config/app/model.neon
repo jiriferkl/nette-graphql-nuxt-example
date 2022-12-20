@@ -1,0 +1,5 @@
+services:
+	- App\Model\Graphql\GraphqlServer
+	- App\Model\Graphql\GraphqlResolver
+
+	- Tracy\Bridges\Psr\TracyToPsrLoggerAdapter
