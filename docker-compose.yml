@@ -28,6 +28,7 @@ services:
       - "8080:80"
     networks:
       - backend
+      - frontend
     volumes:
       - ./backend/:/var/www/html/
 
@@ -43,6 +44,21 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: georgina
 
+  node:
+    image: node:16.19.0
+    ports:
+      - "80:3000"
+      - "24678:24678" # HMR
+    volumes:
+      - ./frontend:/app
+    working_dir: /app
+    user: node
+    command: bash -c "npm install && npm run dev"
+    networks:
+      - frontend
+
 networks:
   backend:
+    driver: bridge
+  frontend:
     driver: bridge
