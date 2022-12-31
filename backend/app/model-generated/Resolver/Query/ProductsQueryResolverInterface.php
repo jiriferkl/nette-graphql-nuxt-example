@@ -8,10 +8,11 @@ declare(strict_types=1);
 
 namespace App\ModelGenerated\Resolver\Query;
 
-use App\Model\Graphql\QueryRequest;
-use App\Model\Graphql\QueryResolver;
+use App\Model\Graphql\Request\QueryRequest;
+use App\Model\Graphql\Resolver\Query\QueryResolver;
+use App\Model\Graphql\Resolver\Type\ConnectionTypeResolverInstance;
 
 interface ProductsQueryResolverInterface extends QueryResolver
 {
-	public function resolve(QueryRequest $request): array;
+	public function resolve(QueryRequest $request): ConnectionTypeResolverInstance;
 }

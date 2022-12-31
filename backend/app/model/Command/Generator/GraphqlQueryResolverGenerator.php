@@ -2,9 +2,10 @@
 
 namespace App\Model\Command\Generator;
 
-use App\Model\Graphql\QueryRequest;
-use App\Model\Graphql\QueryResolver;
-use App\Model\Graphql\ResolverInstance;
+use App\Model\Graphql\Request\QueryRequest;
+use App\Model\Graphql\Resolver\Query\QueryResolver;
+use App\Model\Graphql\Resolver\Type\ConnectionTypeResolverInstance;
+use App\Model\Graphql\Resolver\Type\TypeResolverInstance;
 use Exception;
 use GraphQL\Type\Definition\NonNull;
 use Nette\PhpGenerator\PhpFile;
@@ -84,8 +85,10 @@ final class GraphqlQueryResolverGenerator extends GraphqlGenerator
 			}
 
 			$phpType = $this->convertReturnTypeToPhpType($type);
-			if ($phpType === ResolverInstance::class) {
-				$namespace->addUse(ResolverInstance::class);
+			if ($phpType === TypeResolverInstance::class) {
+				$namespace->addUse(TypeResolverInstance::class);
+			} elseif ($phpType === ConnectionTypeResolverInstance::class) {
+				$namespace->addUse(ConnectionTypeResolverInstance::class);
 			}
 
 			$method->setReturnType($phpType);

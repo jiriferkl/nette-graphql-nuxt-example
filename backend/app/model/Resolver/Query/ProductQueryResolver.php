@@ -2,9 +2,9 @@
 
 namespace App\Model\Resolver\Query;
 
-use App\Model\Graphql\NotFoundException;
-use App\Model\Graphql\QueryRequest;
-use App\Model\Graphql\ResolverInstance;
+use App\Model\Graphql\Exception\NotFoundException;
+use App\Model\Graphql\Request\QueryRequest;
+use App\Model\Graphql\Resolver\Type\TypeResolverInstance;
 use App\ModelGenerated\Request\Query\ProductQueryRequest;
 use App\ModelGenerated\Resolver\Query\ProductQueryResolverInterface;
 use App\ModelGenerated\Resolver\Type\ProductTypeResolverInterface;
@@ -18,7 +18,7 @@ final readonly class ProductQueryResolver implements ProductQueryResolverInterfa
 	{
 	}
 
-	public function resolve(QueryRequest $request): ResolverInstance
+	public function resolve(QueryRequest $request): TypeResolverInstance
 	{
 		if (!($request instanceof ProductQueryRequest)) {
 			throw new Exception();
@@ -28,7 +28,7 @@ final readonly class ProductQueryResolver implements ProductQueryResolverInterfa
 			throw new NotFoundException();
 		}
 
-		return new ResolverInstance($this->productTypeResolver, $request->id);
+		return new TypeResolverInstance($this->productTypeResolver, $request->id);
 	}
 
 }

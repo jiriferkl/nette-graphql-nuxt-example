@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace App\ModelGenerated\Request\Query;
 
-use App\Model\Graphql\QueryRequest;
+use App\Model\Graphql\Request\QueryRequest;
 
 final readonly class ProductQueryRequest implements QueryRequest
 {

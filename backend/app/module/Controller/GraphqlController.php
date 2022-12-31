@@ -55,7 +55,14 @@ final readonly class GraphqlController implements IController
 				->withMessage('Root key \'query\' must be string');
 		}
 
-		return $this->graphqlServer->execute($query);
+		$variables = $body['variables'] ?? [];
+		if (!is_array($variables)) {
+			throw ClientErrorException::create()
+				->withCode(ApiResponse::S400_BAD_REQUEST)
+				->withMessage('Variables must be json');
+		}
+
+		return $this->graphqlServer->execute(query: $query, variables: $variables);
 	}
 
 }

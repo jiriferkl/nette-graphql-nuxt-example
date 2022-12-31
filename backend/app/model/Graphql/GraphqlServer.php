@@ -17,12 +17,16 @@ final readonly class GraphqlServer
 	{
 	}
 
-	/** @return array<mixed> */
-	public function execute(string $query): array
+	/**
+	 * @param array<mixed> $variables
+	 * @return array<mixed>
+	 */
+	public function execute(string $query, array $variables): array
 	{
 		return GraphQL::executeQuery(
 			schema: $this->createSchema(),
 			source: $query,
+			variableValues: $variables,
 			fieldResolver: $this->graphqlResolver->getResolver(),
 		)
 			->setErrorsHandler(function (array $errors, callable $formatter): array {

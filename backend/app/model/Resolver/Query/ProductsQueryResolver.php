@@ -1,26 +1,36 @@
-<?php declare(strict_types = 1);
+<?php declare(strict_types=1);
 
 namespace App\Model\Resolver\Query;
 
-use App\Model\Graphql\QueryRequest;
-use App\Model\Graphql\ResolverInstance;
+use App\Model\Graphql\Cursor;
+use App\Model\Graphql\Pagination;
+use App\Model\Graphql\Request\QueryRequest;
+use App\Model\Graphql\Resolver\Type\ConnectionTypeResolverInstance;
+use App\ModelGenerated\Request\Query\ProductsQueryRequest;
 use App\ModelGenerated\Resolver\Query\ProductsQueryResolverInterface;
-use App\ModelGenerated\Resolver\Type\ProductTypeResolverInterface;
-use Nette\Database\Connection;
-use Nette\Database\Row;
+use App\ModelGenerated\Resolver\Type\ProductConnectionTypeResolverInterface;
+use Exception;
 
 final readonly class ProductsQueryResolver implements ProductsQueryResolverInterface
 {
 
-	public function __construct(private Connection $database, private ProductTypeResolverInterface $productTypeResolver)
+	public function __construct(private ProductConnectionTypeResolverInterface $productConnectionTypeResolver)
 	{
 	}
 
-	public function resolve(QueryRequest $request): array
+	public function resolve(QueryRequest $request): ConnectionTypeResolverInstance
 	{
-		return array_map(function (Row $row): ResolverInstance {
-			return new ResolverInstance($this->productTypeResolver, $row->id);
-		}, $this->database->fetchAll('SELECT id FROM products'));
+		if (!$request instanceof ProductsQueryRequest) {
+			throw new Exception();
+		}
+
+		return new ConnectionTypeResolverInstance(
+			$this->productConnectionTypeResolver,
+			new Pagination(
+				first: $request->pagination?->first,
+				after: Cursor::fromString($request->pagination?->after),
+			)
+		);
 	}
 
 }

@@ -2,6 +2,11 @@
 
 namespace App\Model\Graphql;
 
+use App\Model\Graphql\Request\QueryRequest;
+use App\Model\Graphql\Resolver\Query\QueryResolver;
+use App\Model\Graphql\Resolver\Type\ConnectionTypeResolverInstance;
+use App\Model\Graphql\Resolver\Type\PageInfoResolver;
+use App\Model\Graphql\Resolver\Type\TypeResolverInstance;
 use Exception;
 use GraphQL\Type\Definition\ResolveInfo;
 use Nette\DI\Container;
@@ -18,11 +23,15 @@ final readonly class GraphqlResolver
 	{
 		$buffer = new Buffer();
 		return function(mixed $root, array $args, ?array $context, ResolveInfo $info) use (& $buffer): mixed {
-			$name = Strings::capitalize($info->fieldName);
+			$name = Strings::firstUpper($info->fieldName);
 			if ($root === null) {
 				return $this->getQueryResolver($name)->resolve($this->getQueryRequest($name, $args));
-			} elseif ($root instanceof ResolverInstance) {
+			} elseif ($root instanceof TypeResolverInstance) {
 				return $root->resolver->{'resolve' . $name}($root->id, $buffer);
+			} elseif ($root instanceof ConnectionTypeResolverInstance) {
+				return $root->resolver->{'resolve' . $name}($root->pagination);
+			} elseif ($root instanceof PageInfoResolver) {
+				return $root->{'resolve' . $name}();
 			} else {
 				throw new Exception('Not implemented');
 			}

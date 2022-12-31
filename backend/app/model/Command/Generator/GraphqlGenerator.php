@@ -3,7 +3,8 @@
 namespace App\Model\Command\Generator;
 
 use App\Model\Graphql\GraphqlServer;
-use App\Model\Graphql\ResolverInstance;
+use App\Model\Graphql\Resolver\Type\ConnectionTypeResolverInstance;
+use App\Model\Graphql\Resolver\Type\TypeResolverInstance;
 use Exception;
 use GraphQL\Type\Definition\IDType;
 use GraphQL\Type\Definition\ListOfType;
@@ -22,7 +23,7 @@ abstract class GraphqlGenerator extends Command
 		parent::__construct();
 	}
 
-	private function convertToPhpType(Type $type): string
+	protected function convertToPhpType(Type $type): string
 	{
 		if ($type instanceof IDType) {
 			return 'int';
@@ -37,15 +38,12 @@ abstract class GraphqlGenerator extends Command
 
 	protected function convertReturnTypeToPhpType(Type $type): string
 	{
-		if ($type instanceof ObjectType) {
-			return ResolverInstance::class;
+		if (Strings::endsWith($type->name, 'Connection')) {
+			return ConnectionTypeResolverInstance::class;
+		} elseif ($type instanceof ObjectType) {
+			return TypeResolverInstance::class;
 		}
 
-		return $this->convertToPhpType($type);
-	}
-
-	protected function convertArgumentTypeToPhpType(Type $type): string
-	{
 		return $this->convertToPhpType($type);
 	}
 

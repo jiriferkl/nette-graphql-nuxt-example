@@ -14,6 +14,7 @@ final class GraphqlAllGenerator extends GraphqlGenerator
 	protected function execute(InputInterface $input, OutputInterface $output): int
 	{
 		$names = [
+			GraphqlInputGenerator::getDefaultName(),
 			GraphqlQueryRequestGenerator::getDefaultName(),
 			GraphqlQueryResolverGenerator::getDefaultName(),
 			GraphqlTypeResolverGenerator::getDefaultName(),

@@ -2,4 +2,6 @@ services:
 	- App\Model\Resolver\Query\ProductQueryResolver
 	- App\Model\Resolver\Query\ProductsQueryResolver
 
+	- App\Model\Resolver\Type\ProductConnectionTypeResolver
+	- App\Model\Resolver\Type\ProductEdgeTypeResolver
 	- App\Model\Resolver\Type\ProductTypeResolver

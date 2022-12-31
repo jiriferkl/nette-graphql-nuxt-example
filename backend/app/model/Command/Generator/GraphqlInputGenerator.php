@@ -2,7 +2,6 @@
 
 namespace App\Model\Command\Generator;
 
-use App\Model\Graphql\Request\QueryRequest;
 use Exception;
 use GraphQL\Type\Definition\IDType;
 use GraphQL\Type\Definition\InputObjectType;
@@ -20,10 +19,10 @@ use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-final class GraphqlQueryRequestGenerator extends GraphqlGenerator
+final class GraphqlInputGenerator extends GraphqlGenerator
 {
 
-	protected static $defaultName = 'generate:query:request';
+	protected static $defaultName = 'generate:input';
 
 	protected function configure(): void
 	{
@@ -40,81 +39,68 @@ final class GraphqlQueryRequestGenerator extends GraphqlGenerator
 			throw new Exception('This command accepts only an instance of "ConsoleOutputInterface".');
 		}
 
-		$debug = (bool) $input->getOption('debug');
+		$debug = (bool)$input->getOption('debug');
 
 		$io = new SymfonyStyle($input, $output);
-		$io->title('Query request');
+		$io->title('Input');
 
 		$printer = new Printer();
 
 		$baseDir = __DIR__ . '/../../../model-generated/';
-		$dir = sprintf("%sRequest/Query/", $baseDir);
+		$dir = sprintf("%sInput/", $baseDir);
 
 		$filesToRemove = [];
 		foreach (Finder::findFiles('*.php')->from($dir) as $key => $file) {
 			$filesToRemove[$file->getFilename()] = $key;
 		}
 
-		foreach ($this->graphqlServer->createSchema()->getQueryType()->getFields() as $field) {
+		foreach ($this->graphqlServer->createSchema()->getTypeMap() as $type) {
+			if (!($type instanceof InputObjectType)) {
+				continue;
+			}
+
 			$section = $output->section();
 
 			if ($debug) {
-				$io->section(sprintf('Generating "%s"', $field->getName()));
+				$io->section(sprintf('Generating "%s"', $type->name));
 			} else {
-				$section->writeln(sprintf('Generating "%s" ⌛', $field->getName()));
+				$section->writeln(sprintf('Generating "%s" ⌛', $type->name));
 			}
 
 			$file = new PhpFile();
 			$file->addComment('This file is auto-generated.');
 			$file->setStrictTypes();
 
-			$namespace = $file->addNamespace('App\ModelGenerated\Request\Query');
-			$name = Strings::firstUpper($field->getName()) . 'QueryRequest';
+			$namespace = $file->addNamespace('App\ModelGenerated\Input');
+			$name = Strings::firstUpper($type->name) . 'Input';
 			$class = $namespace->addClass($name);
 			$class->setFinal();
 			$class->setReadOnly();
-			$class->addImplement(QueryRequest::class);
-			$namespace->addUse(QueryRequest::class);
 
 			$constructor = $class->addMethod('__construct');
 			$method = $class->addMethod('fromArray');
 			$method->setStatic();
 			$method->addParameter('args')->setType('array');
 			$method->setReturnType('self');
+
 			$body = [];
 			$comment = [];
 
-			foreach ($field->args as $arg) {
-				$constructorParameter = $constructor->addPromotedParameter($arg->name);
+			foreach ($type->getFields() as $field) {
+				$constructorParameter = $constructor->addPromotedParameter($field->name);
 
-				$type = $arg->getType();
-				$isNonNull = $type instanceof NonNull;
+				$fieldType = $field->getType();
+				$isNonNull = $fieldType instanceof NonNull;
 
 				if ($isNonNull) {
-					$type = $this->getProperType($type);
+					$fieldType = $this->getProperType($fieldType);
 				} else {
 					$constructorParameter->setNullable();
 				}
 
-				if ($type instanceof InputObjectType) {
-					if ($isNonNull) {
-						$body[$arg->name] = new Literal(sprintf('%sInput::fromArray($args[\'%s\'])', Strings::firstUpper($arg->name), $arg->name));
-					} else {
-						$body[$arg->name] = new Literal(sprintf('$args[\'%s\'] !== null ? %sInput::fromArray($args[\'%s\']) : null', $arg->name, Strings::firstUpper($arg->name), $arg->name));
-					}
-
-					$namespace->addUse(sprintf('\App\ModelGenerated\Input\%sInput', Strings::firstUpper($arg->name)));
-					$constructorParameter->setType(sprintf('\App\ModelGenerated\Input\%sInput', Strings::firstUpper($arg->name)));
-					$typeFieldComment = [];
-					foreach ($type->getFields() as $typeField) {
-						$typeFieldComment[] = sprintf('%s: %s%s', $typeField->name, $this->convertToPhpType($this->getProperType($typeField->getType())), $typeField->getType() instanceOf NonNull ? '' : '|null');
-					}
-					$comment[] = sprintf('%s: array{%s}%s', $arg->name, join(', ', $typeFieldComment), $isNonNull ? '' : '|null');
-				} else {
-					$body[$arg->name] = new Literal(sprintf('%s$args[\'%s\']', $this->getCast($type), $arg->name));
-					$constructorParameter->setType($this->convertToPhpType($type));
-					$comment[] = sprintf('%s: %s%s', $arg->name, $this->convertToPhpType($type), $isNonNull ? '' : '|null');
-				}
+				$body[$field->name] = new Literal(sprintf('%s$args[\'%s\']', $this->getCast($fieldType), $field->name));
+				$constructorParameter->setType($this->convertToPhpType($fieldType));
+				$comment[] = sprintf('%s: %s%s', $field->name, $this->convertToPhpType($fieldType), $isNonNull ? '' : '|null');
 			}
 
 			$method->addBody('return new self(...?:);', [$body]);
@@ -127,7 +113,7 @@ final class GraphqlQueryRequestGenerator extends GraphqlGenerator
 				$io->writeln($printed);
 			} else {
 				FileSystem::write(sprintf("%s%s.php", $dir, $name), $printed);
-				$section->overwrite(sprintf('Generating "%s" ✅', $field->getName()));
+				$section->overwrite(sprintf('Generating "%s" ✅', $type->name));
 			}
 		}
 

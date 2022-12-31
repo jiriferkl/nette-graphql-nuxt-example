@@ -2,8 +2,8 @@
 
 namespace Qa\Rule;
 
-use App\Model\Graphql\QueryResolver;
-use App\Model\Graphql\TypeResolver;
+use App\Model\Graphql\Resolver\Query\QueryResolver;
+use App\Model\Graphql\Resolver\Type\TypeResolver;
 use Nette\Utils\Arrays;
 use PhpParser\Node;
 use PhpParser\Node\Name;

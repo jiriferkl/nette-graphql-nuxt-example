@@ -4,10 +4,31 @@ schema {
 
 type Query {
   product(id: ID!): Product!
-  products: [Product]!
+  products(pagination: Pagination): ProductConnection!
+}
+
+type ProductConnection {
+  totalCount: Int!
+  edges: [ProductEdge]!
+  pageInfo: PageInfo!
+}
+
+type ProductEdge {
+  cursor: String!
+  node: Product!
 }
 
 type Product {
   id: ID!
   title: String!
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  endCursor: String
+}
+
+input Pagination {
+  first: Int,
+  after: String,
 }
