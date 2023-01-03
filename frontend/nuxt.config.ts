@@ -45,15 +45,19 @@ export default defineNuxtConfig({
                     app: {
                         nav: {
                             homepage: 'Domů',
-                            products: 'Produkty',
+                            product: 'Produkty',
                         }
                     },
                     components: {
                         LangSwitcher: {
                             chooseLang: 'Vybrat jazyk'
                         },
-                        ProductList: {
-                            loadMore: 'Načíst další'
+                    },
+                    pages: {
+                        product: {
+                            index: {
+                                loadMore: 'Načíst další'
+                            }
                         }
                     }
                 },
@@ -61,15 +65,19 @@ export default defineNuxtConfig({
                     app: {
                         nav: {
                             homepage: 'Home',
-                            products: 'Products',
+                            product: 'Products',
                         }
                     },
                     components: {
                         LangSwitcher: {
                             chooseLang: 'Change language'
                         },
-                        ProductList: {
-                            loadMore: 'Load more'
+                    },
+                    pages: {
+                        product: {
+                            index: {
+                                loadMore: 'Load more'
+                            }
                         }
                     }
                 },
