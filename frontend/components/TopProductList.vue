@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="result && result.products">
-      <div v-for="product in result.products.edges" :key="product.node.id">{{ product.node.title }}</div>
+      <div v-for="product in result.products.edges" :key="product.node.id">{{ product.node.name }}</div>
     </div>
     <div v-else>Loading..</div>
   </div>
@@ -14,7 +14,7 @@ const query = gql`
       edges {
         node {
           id
-          title
+          name
         }
       }
     }

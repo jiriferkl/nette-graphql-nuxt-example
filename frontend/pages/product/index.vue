@@ -3,7 +3,7 @@
     <div v-if="result && result.products">
       <NuxtLink v-for="product in result.products.edges" :key="product.node.id" :to="'/product/' + product.node.id">
         <div>
-          {{ product.node.id }} {{ product.node.title }}
+          {{ product.node.id }} {{ product.node.name }}
         </div>
       </NuxtLink>
       <div>
@@ -22,7 +22,7 @@ const query = gql`
       edges {
         node {
           id
-          title
+          name
         }
       }
       pageInfo {

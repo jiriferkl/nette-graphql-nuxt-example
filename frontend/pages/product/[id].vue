@@ -1,10 +1,20 @@
 <template>
   <div>
-    <div v-if="result && result.product" class="flex">
-      <div class="w-1/2">
+    <div v-if="result && result.product">
+      <div class="flex">
+        <div class="w-1/2">
+        </div>
+        <div class="w-1/2 pl-5">
+          <h1 class="text-2xl">{{ result.product.name }}</h1>
+          <h2 class="text-lg text-slate-600">{{ result.product.shortDescription }}</h2>
+          <div>
+            <span class="text-2xl mr-5">{{ result.product.currentPrice }}</span>
+            <span class="text-lg text-slate-600 line-through">{{ result.product.originalPrice }}</span>
+          </div>
+        </div>
       </div>
-      <div class="w-1/2 pl-5">
-        <h1 class="text-2xl">{{ result.product.title }}</h1>
+      <div>
+        {{ result.product.fullDescription }}
       </div>
     </div>
   </div>
@@ -17,7 +27,11 @@ const query = gql`
   query product($id: ID!) {
     product(id: $id) {
       id
-      title
+      name
+      shortDescription
+      fullDescription
+      currentPrice
+      originalPrice
     }
   }
 `
