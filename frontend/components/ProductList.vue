@@ -5,8 +5,8 @@
         {{ product.node.id }} {{ product.node.title }}
       </div>
       <div>
-        <button v-if="result.products.pageInfo.hasNextPage && !loading" @click="loadMore">Load more</button>
-        <button v-else disabled>Load more</button>
+        <button v-if="result.products.pageInfo.hasNextPage && !loading" @click="loadMore">{{ $t('components.ProductList.loadMore') }}</button>
+        <button v-else disabled>{{ $t('components.ProductList.loadMore') }}</button>
       </div>
     </div>
     <div v-else>Loading..</div>
