@@ -1,18 +1,29 @@
 <template>
   <div>
-    <div v-for="product in data.products" :key="product.id">{{ product.title }}</div>
+    <div v-if="result && result.products">
+      <div v-for="product in result.products.edges" :key="product.node.id">{{ product.node.title }}</div>
+    </div>
+    <div v-else>Loading..</div>
   </div>
 </template>
 
 <script setup>
 const query = gql`
-  query products {
-    products {
-      id
-      title
+  query products($pagination: Pagination!) {
+    products(pagination: $pagination) {
+      edges {
+        node {
+          id
+          title
+        }
+      }
     }
   }
 `
 
-const { data } = await useAsyncQuery(query);
+const { result } = useQuery(query, {
+  pagination: {
+    first: 10,
+  }
+});
 </script>

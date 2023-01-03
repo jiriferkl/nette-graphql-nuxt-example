@@ -6,6 +6,20 @@ export default defineNuxtConfig({
             default: {
                 httpEndpoint: 'http://localhost:3000/api/graphql',
                 browserHttpEndpoint: '/api/graphql',
+                inMemoryCacheOptions: {
+                    typePolicies: {
+                        Query: {
+                            fields: {
+                                products: {
+                                    keyArgs: false,
+                                    merge(existing = [], incoming) {
+                                        return [...existing, ...incoming];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     },
