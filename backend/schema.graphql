@@ -20,7 +20,37 @@ type ProductEdge {
 
 type Product {
   id: ID!
-  title: String!
+  name: String!
+  shortDescription: String!
+  fullDescription: String!
+  currentPrice: String!
+  originalPrice: String!
+  discount: Int!
+  studio: Studio!
+  productPlatform: ProductPlatform!
+  productEdition: ProductEdition!
+}
+
+type ProductEdition {
+  id: ID!
+  name: String!
+  product: Product!
+}
+
+type Studio {
+  id: ID!
+  name: String!
+}
+
+type ProductPlatform {
+  id: ID!
+  product: Product!
+  platform: Platform!
+}
+
+type Platform {
+  id: ID!
+  name: String!
 }
 
 type PageInfo {
