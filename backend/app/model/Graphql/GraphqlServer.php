@@ -26,6 +26,7 @@ final readonly class GraphqlServer
 		return GraphQL::executeQuery(
 			schema: $this->createSchema(),
 			source: $query,
+			contextValue: new Context(),
 			variableValues: $variables,
 			fieldResolver: $this->graphqlResolver->getResolver(),
 		)

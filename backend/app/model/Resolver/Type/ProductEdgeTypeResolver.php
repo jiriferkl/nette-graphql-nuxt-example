@@ -2,11 +2,13 @@
 
 namespace App\Model\Resolver\Type;
 
-use App\Model\Graphql\Buffer;
+use App\Model\Graphql\Context;
 use App\Model\Graphql\Cursor;
-use App\Model\Graphql\Resolver\Type\TypeResolverInstance;
+use App\Model\Graphql\Resolver\Type\ResolverInstance;
 use App\ModelGenerated\Resolver\Type\ProductEdgeTypeResolverInterface;
 use App\ModelGenerated\Resolver\Type\ProductTypeResolverInterface;
+use Exception;
+use GraphQL\Type\Definition\ResolveInfo;
 
 final readonly class ProductEdgeTypeResolver implements ProductEdgeTypeResolverInterface
 {
@@ -15,14 +17,22 @@ final readonly class ProductEdgeTypeResolver implements ProductEdgeTypeResolverI
 	{
 	}
 
-	public function resolveCursor(int $id, Buffer $buffer): Cursor
+	public function resolveCursor(mixed $data, Context $context, ResolveInfo $info): Cursor
 	{
-		return new Cursor($id);
+		if (!is_int($data)) {
+			throw new Exception();
+		}
+
+		return new Cursor($data);
 	}
 
-	public function resolveNode(int $id, Buffer $buffer): TypeResolverInstance
+	public function resolveNode(mixed $data, Context $context, ResolveInfo $info): ResolverInstance
 	{
-		return new TypeResolverInstance($this->productTypeResolver, $id);
+		if (!is_int($data)) {
+			throw new Exception();
+		}
+
+		return new ResolverInstance($this->productTypeResolver, $data);
 	}
 
 }

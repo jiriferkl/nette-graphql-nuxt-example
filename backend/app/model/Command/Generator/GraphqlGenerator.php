@@ -3,8 +3,7 @@
 namespace App\Model\Command\Generator;
 
 use App\Model\Graphql\GraphqlServer;
-use App\Model\Graphql\Resolver\Type\ConnectionTypeResolverInstance;
-use App\Model\Graphql\Resolver\Type\TypeResolverInstance;
+use App\Model\Graphql\Resolver\Type\ResolverInstance;
 use Exception;
 use GraphQL\Type\Definition\IDType;
 use GraphQL\Type\Definition\ListOfType;
@@ -38,10 +37,17 @@ abstract class GraphqlGenerator extends Command
 
 	protected function convertReturnTypeToPhpType(Type $type): string
 	{
-		if (Strings::endsWith($type->name, 'Connection')) {
-			return ConnectionTypeResolverInstance::class;
-		} elseif ($type instanceof ObjectType) {
-			return TypeResolverInstance::class;
+		if ($type instanceof ObjectType) {
+			return ResolverInstance::class;
+		}
+
+		return $this->convertToPhpType($type);
+	}
+
+	protected function convertToPhpTypeForComment(Type $type): string
+	{
+		if ($type instanceof IDType) {
+			return 'string';
 		}
 
 		return $this->convertToPhpType($type);

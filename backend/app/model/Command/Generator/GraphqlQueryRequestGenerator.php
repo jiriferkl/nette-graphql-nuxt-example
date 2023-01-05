@@ -2,7 +2,7 @@
 
 namespace App\Model\Command\Generator;
 
-use App\Model\Graphql\Request\QueryRequest;
+use App\Model\Graphql\Request\Request;
 use Exception;
 use GraphQL\Type\Definition\IDType;
 use GraphQL\Type\Definition\InputObjectType;
@@ -73,8 +73,8 @@ final class GraphqlQueryRequestGenerator extends GraphqlGenerator
 			$class = $namespace->addClass($name);
 			$class->setFinal();
 			$class->setReadOnly();
-			$class->addImplement(QueryRequest::class);
-			$namespace->addUse(QueryRequest::class);
+			$class->addImplement(Request::class);
+			$namespace->addUse(Request::class);
 
 			$constructor = $class->addMethod('__construct');
 			$method = $class->addMethod('fromArray');
@@ -100,20 +100,47 @@ final class GraphqlQueryRequestGenerator extends GraphqlGenerator
 					if ($isNonNull) {
 						$body[$arg->name] = new Literal(sprintf('%sInput::fromArray($args[\'%s\'])', Strings::firstUpper($arg->name), $arg->name));
 					} else {
-						$body[$arg->name] = new Literal(sprintf('$args[\'%s\'] !== null ? %sInput::fromArray($args[\'%s\']) : null', $arg->name, Strings::firstUpper($arg->name), $arg->name));
+						$body[$arg->name] = new Literal(sprintf(
+							'array_key_exists(\'%s\', $args) && !empty($args[\'%s\']) ? %sInput::fromArray($args[\'%s\']) : null',
+							$arg->name,
+							$arg->name,
+							Strings::firstUpper($arg->name),
+							$arg->name,
+						));
 					}
 
-					$namespace->addUse(sprintf('\App\ModelGenerated\Input\%sInput', Strings::firstUpper($arg->name)));
-					$constructorParameter->setType(sprintf('\App\ModelGenerated\Input\%sInput', Strings::firstUpper($arg->name)));
+					$inputType = sprintf('\App\ModelGenerated\Input\%sInput', Strings::firstUpper($arg->name));
+					$namespace->addUse($inputType);
+					$constructorParameter->setType($inputType);
+
 					$typeFieldComment = [];
 					foreach ($type->getFields() as $typeField) {
-						$typeFieldComment[] = sprintf('%s: %s%s', $typeField->name, $this->convertToPhpType($this->getProperType($typeField->getType())), $typeField->getType() instanceOf NonNull ? '' : '|null');
+						$typeFieldComment[] = sprintf(
+							'%s%s: %s%s',
+							$typeField->name,
+							$typeField->getType() instanceOf NonNull ? '' : '?',
+							$this->convertToPhpTypeForComment($this->getProperType($typeField->getType())),
+							$typeField->getType() instanceOf NonNull ? '' : '|null'
+						);
 					}
-					$comment[] = sprintf('%s: array{%s}%s', $arg->name, join(', ', $typeFieldComment), $isNonNull ? '' : '|null');
+					$comment[] = sprintf('%s%s: array{%s}%s', $arg->name, $isNonNull ? '' : '?', join(', ', $typeFieldComment), $isNonNull ? '' : '|null');
 				} else {
-					$body[$arg->name] = new Literal(sprintf('%s$args[\'%s\']', $this->getCast($type), $arg->name));
+					if ($isNonNull) {
+						$body[$arg->name] = new Literal(sprintf('%s$args[\'%s\']', $this->getCast($type), $arg->name));
+					} else {
+						$body[$arg->name] = new Literal(sprintf(
+							'array_key_exists(\'%s\', $args) && !empty($args[\'%s\']) ? %s%s$args[\'%s\']%s : null',
+							$arg->name,
+							$arg->name,
+							($this->getCast($type) !== '' ? '(' : ''),
+							$this->getCast($type),
+							$arg->name,
+							($this->getCast($type) !== '' ? ')' : '')
+						));
+					}
+
 					$constructorParameter->setType($this->convertToPhpType($type));
-					$comment[] = sprintf('%s: %s%s', $arg->name, $this->convertToPhpType($type), $isNonNull ? '' : '|null');
+					$comment[] = sprintf('%s%s: %s%s', $arg->name, $isNonNull ? '' : '?', $this->convertToPhpTypeForComment($type), $isNonNull ? '' : '|null');
 				}
 			}
 

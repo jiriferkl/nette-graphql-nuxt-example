@@ -5,6 +5,7 @@ schema {
 type Query {
   product(id: ID!): Product!
   products(pagination: Pagination): ProductConnection!
+  search(query: String!): ProductConnection!
 }
 
 type ProductConnection {
@@ -21,8 +22,8 @@ type ProductEdge {
 type Product {
   id: ID!
   name: String!
-  shortDescription: String!
-  fullDescription: String!
+  shortDescription(lang: Language!): String!
+  longDescription(lang: Language!): String!
   currentPrice: String!
   originalPrice: String!
   discount: Int!
@@ -61,4 +62,9 @@ type PageInfo {
 input Pagination {
   first: Int,
   after: String,
+}
+
+enum Language {
+  cs
+  en
 }

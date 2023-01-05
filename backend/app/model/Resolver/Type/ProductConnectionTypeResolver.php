@@ -2,12 +2,15 @@
 
 namespace App\Model\Resolver\Type;
 
+use App\Model\Graphql\Context;
 use App\Model\Graphql\Cursor;
 use App\Model\Graphql\Pagination;
 use App\Model\Graphql\Resolver\Type\PageInfoResolver;
-use App\Model\Graphql\Resolver\Type\TypeResolverInstance;
+use App\Model\Graphql\Resolver\Type\ResolverInstance;
 use App\ModelGenerated\Resolver\Type\ProductConnectionTypeResolverInterface;
 use App\ModelGenerated\Resolver\Type\ProductEdgeTypeResolverInterface;
+use Exception;
+use GraphQL\Type\Definition\ResolveInfo;
 use Nette\Database\Explorer;
 use Nette\Database\Table\ActiveRow;
 use Nette\Utils\Arrays;
@@ -19,23 +22,31 @@ final readonly class ProductConnectionTypeResolver implements ProductConnectionT
 	{
 	}
 
-	public function resolveTotalCount(Pagination $pagination): int
+	public function resolveTotalCount(mixed $data, Context $context, ResolveInfo $info): int
 	{
 		return $this->database->fetchField('SELECT COUNT(id) FROM products');
 	}
 
-	/** @return array<int, TypeResolverInstance> */
-	public function resolveEdges(Pagination $pagination): array
+	/** @return array<int, ResolverInstance> */
+	public function resolveEdges(mixed $data, Context $context, ResolveInfo $info): array
 	{
-		return array_map(function (ActiveRow $row): TypeResolverInstance {
-			return new TypeResolverInstance($this->productEdgeTypeResolver, $row->id);
-		}, $this->getEdges($pagination));
+		if (!$data instanceof Pagination) {
+			throw new Exception();
+		}
+
+		return array_map(function (ActiveRow $row): ResolverInstance {
+			return new ResolverInstance($this->productEdgeTypeResolver, $row->id);
+		}, $this->getEdges($data));
 	}
 
-	public function resolvePageInfo(Pagination $pagination): PageInfoResolver
+	public function resolvePageInfo(mixed $data, Context $context, ResolveInfo $info): PageInfoResolver
 	{
+		if (!$data instanceof Pagination) {
+			throw new Exception();
+		}
+
 		/** @var ActiveRow|null $lastEdge */
-		$lastEdge = Arrays::last($this->getEdges($pagination));
+		$lastEdge = Arrays::last($this->getEdges($data));
 
 		/** @var int|null $endCursor */
 		$endCursor = $lastEdge?->id;

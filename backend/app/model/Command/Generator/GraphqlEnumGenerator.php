@@ -3,11 +3,7 @@
 namespace App\Model\Command\Generator;
 
 use Exception;
-use GraphQL\Type\Definition\IDType;
-use GraphQL\Type\Definition\InputObjectType;
-use GraphQL\Type\Definition\NonNull;
-use GraphQL\Type\Definition\Type;
-use Nette\PhpGenerator\Literal;
+use GraphQL\Type\Definition\EnumType;
 use Nette\PhpGenerator\PhpFile;
 use Nette\PhpGenerator\Printer;
 use Nette\Utils\FileSystem;
@@ -19,10 +15,10 @@ use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-final class GraphqlInputGenerator extends GraphqlGenerator
+final class GraphqlEnumGenerator extends GraphqlGenerator
 {
 
-	protected static $defaultName = 'generate:input';
+	protected static $defaultName = 'generate:enum';
 
 	protected function configure(): void
 	{
@@ -42,12 +38,12 @@ final class GraphqlInputGenerator extends GraphqlGenerator
 		$debug = (bool)$input->getOption('debug');
 
 		$io = new SymfonyStyle($input, $output);
-		$io->title('Input');
+		$io->title('Enum');
 
 		$printer = new Printer();
 
 		$baseDir = __DIR__ . '/../../../model-generated/';
-		$dir = sprintf("%sInput/", $baseDir);
+		$dir = sprintf("%sEnum/", $baseDir);
 
 		$filesToRemove = [];
 		foreach (Finder::findFiles('*.php')->from($dir) as $key => $file) {
@@ -55,7 +51,11 @@ final class GraphqlInputGenerator extends GraphqlGenerator
 		}
 
 		foreach ($this->graphqlServer->createSchema()->getTypeMap() as $type) {
-			if (!($type instanceof InputObjectType)) {
+			if (!($type instanceof EnumType)) {
+				continue;
+			}
+
+			if ($type::isBuiltInType($type)) {
 				continue;
 			}
 
@@ -71,53 +71,13 @@ final class GraphqlInputGenerator extends GraphqlGenerator
 			$file->addComment('This file is auto-generated.');
 			$file->setStrictTypes();
 
-			$namespace = $file->addNamespace('App\ModelGenerated\Input');
-			$name = Strings::firstUpper($type->name) . 'Input';
-			$class = $namespace->addClass($name);
-			$class->setFinal();
-			$class->setReadOnly();
+			$namespace = $file->addNamespace('App\ModelGenerated\Enum');
+			$name = Strings::firstUpper($type->name);
+			$enum = $namespace->addEnum($name);
 
-			$constructor = $class->addMethod('__construct');
-			$method = $class->addMethod('fromArray');
-			$method->setStatic();
-			$method->addParameter('args')->setType('array');
-			$method->setReturnType('self');
-
-			$body = [];
-			$comment = [];
-
-			foreach ($type->getFields() as $field) {
-				$constructorParameter = $constructor->addPromotedParameter($field->name);
-
-				$fieldType = $field->getType();
-				$isNonNull = $fieldType instanceof NonNull;
-
-				if ($isNonNull) {
-					$fieldType = $this->getProperType($fieldType);
-				} else {
-					$constructorParameter->setNullable();
-				}
-
-				if ($isNonNull) {
-					$body[$field->name] = new Literal(sprintf('%s$args[\'%s\']', $this->getCast($fieldType), $field->name));
-				} else {
-					$body[$field->name] = new Literal(sprintf(
-						'array_key_exists(\'%s\', $args) && !empty($args[\'%s\']) ? %s%s$args[\'%s\']%s : null',
-						$field->name,
-						$field->name,
-						($this->getCast($fieldType) !== '' ? '(' : ''),
-						$this->getCast($fieldType),
-						$field->name,
-						($this->getCast($fieldType) !== '' ? ')' : '')
-					));
-				}
-
-				$constructorParameter->setType($this->convertToPhpType($fieldType));
-				$comment[] = sprintf('%s%s: %s%s', $field->name, $isNonNull ? '' : '?', $this->convertToPhpTypeForComment($fieldType), $isNonNull ? '' : '|null');
+			foreach ($type->getValues() as $value) {
+				$enum->addCase(Strings::upper($value->name), $value->value);
 			}
-
-			$method->addBody('return new self(...?:);', [$body]);
-			$method->addComment(sprintf('@phpstan-param array{%s} $args', join(', ', $comment)));
 
 			$printed = $printer->printFile($file);
 			unset($filesToRemove[sprintf('%s.php', $name)]);
@@ -146,15 +106,6 @@ final class GraphqlInputGenerator extends GraphqlGenerator
 		$io->writeln('');
 		$io->success('Done');
 		return Command::SUCCESS;
-	}
-
-	private function getCast(Type $type): string
-	{
-		if ($type instanceof IDType) {
-			return '(int) ';
-		}
-
-		return '';
 	}
 
 }

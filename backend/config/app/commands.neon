@@ -1,6 +1,8 @@
 services:
 	- App\Model\Command\Generator\GraphqlAllGenerator
+	- App\Model\Command\Generator\GraphqlEnumGenerator
 	- App\Model\Command\Generator\GraphqlInputGenerator
 	- App\Model\Command\Generator\GraphqlQueryRequestGenerator
 	- App\Model\Command\Generator\GraphqlQueryResolverGenerator
+	- App\Model\Command\Generator\GraphqlTypeRequestGenerator
 	- App\Model\Command\Generator\GraphqlTypeResolverGenerator

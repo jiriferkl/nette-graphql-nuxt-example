@@ -2,12 +2,13 @@
 
 namespace App\Model\Command\Generator;
 
-use App\Model\Graphql\Request\QueryRequest;
+use App\Model\Graphql\Context;
 use App\Model\Graphql\Resolver\Query\QueryResolver;
-use App\Model\Graphql\Resolver\Type\ConnectionTypeResolverInstance;
-use App\Model\Graphql\Resolver\Type\TypeResolverInstance;
+use App\Model\Graphql\Resolver\Type\ResolverInstance;
+use App\Model\Graphql\Resolver\Type\TypeResolver;
 use Exception;
 use GraphQL\Type\Definition\NonNull;
+use GraphQL\Type\Definition\ResolveInfo;
 use Nette\PhpGenerator\PhpFile;
 use Nette\PhpGenerator\Printer;
 use Nette\Utils\FileSystem;
@@ -74,8 +75,15 @@ final class GraphqlQueryResolverGenerator extends GraphqlGenerator
 			$namespace->addUse(QueryResolver::class);
 
 			$method = $interface->addMethod('resolve')->setPublic();
-			$method->addParameter('request')->setType(QueryRequest::class);
-			$namespace->addUse(QueryRequest::class);
+			$requestType = sprintf("App\\ModelGenerated\\Request\\Query\\%sQueryRequest", Strings::firstUpper($field->getName()));
+			$method->addParameter('request')->setType($requestType);
+			$namespace->addUse($requestType);
+
+			$method->addParameter('context')->setType(Context::class);
+			$namespace->addUse(Context::class);
+
+			$method->addParameter('info')->setType(ResolveInfo::class);
+			$namespace->addUse(ResolveInfo::class);
 
 			$type = $field->getType();
 			if ($type instanceof NonNull) {
@@ -85,10 +93,10 @@ final class GraphqlQueryResolverGenerator extends GraphqlGenerator
 			}
 
 			$phpType = $this->convertReturnTypeToPhpType($type);
-			if ($phpType === TypeResolverInstance::class) {
-				$namespace->addUse(TypeResolverInstance::class);
-			} elseif ($phpType === ConnectionTypeResolverInstance::class) {
-				$namespace->addUse(ConnectionTypeResolverInstance::class);
+			if ($phpType === ResolverInstance::class) {
+				$namespace->addUse(ResolverInstance::class);
+				$namespace->addUse(TypeResolver::class);
+				$phpType .= '|' . TypeResolver::class;
 			}
 
 			$method->setReturnType($phpType);

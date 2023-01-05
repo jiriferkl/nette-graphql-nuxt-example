@@ -2,16 +2,15 @@
 
 namespace App\Model\Command\Generator;
 
-use App\Model\Graphql\Buffer;
+use App\Model\Graphql\Context;
 use App\Model\Graphql\Cursor;
-use App\Model\Graphql\Resolver\Type\ConnectionTypeResolver;
-use App\Model\Graphql\Resolver\Type\ConnectionTypeResolverInstance;
+use App\Model\Graphql\Resolver\Type\ResolverInstance;
 use App\Model\Graphql\Resolver\Type\TypeResolver;
-use App\Model\Graphql\Resolver\Type\TypeResolverInstance;
 use Exception;
 use GraphQL\Deferred;
 use GraphQL\Type\Definition\NonNull;
 use GraphQL\Type\Definition\ObjectType;
+use GraphQL\Type\Definition\ResolveInfo;
 use Nette\PhpGenerator\PhpFile;
 use Nette\PhpGenerator\Printer;
 use Nette\Utils\FileSystem;
@@ -92,42 +91,43 @@ final class GraphqlTypeResolverGenerator extends GraphqlGenerator
 			$name = Strings::firstUpper($type->name) . 'TypeResolverInterface';
 			$interface = $namespace->addInterface($name);
 
-			if(Strings::endsWith($type->name, 'Connection')) {
-				$interface->addExtend(ConnectionTypeResolver::class);
-				$namespace->addUse(ConnectionTypeResolver::class);
-			} else {
-				$interface->addExtend(TypeResolver::class);
-				$namespace->addUse(TypeResolver::class);
-				$namespace->addUse(Buffer::class);
-				$namespace->addUse(Deferred::class);
+			$interface->addExtend(TypeResolver::class);
+			$namespace->addUse(TypeResolver::class);
+			$namespace->addUse(Context::class);
+			$namespace->addUse(ResolveInfo::class);
+			$namespace->addUse(Deferred::class);
 
-				foreach ($type->getFields() as $resolver) {
-					$method = $interface->addMethod(sprintf('resolve%s', Strings::firstUpper($resolver->getName())));
-					$method->setPublic();
-					$method->addParameter('id')->setType('int');
-					$method->addParameter('buffer')->setType(Buffer::class);
-
-					$resolverType = $resolver->getType();
-					if ($resolverType instanceof NonNull) {
-						$resolverType = $this->getProperType($resolverType);
-					} else {
-						$method->setReturnNullable();
-					}
-
-					if ($resolver->name === 'cursor') {
-						$phpResolverType = Cursor::class;
-						$namespace->addUse(Cursor::class);
-					} else {
-						$phpResolverType = $this->convertReturnTypeToPhpType($resolverType);
-						if ($phpResolverType === TypeResolverInstance::class) {
-							$namespace->addUse(TypeResolverInstance::class);
-						} elseif ($phpResolverType === ConnectionTypeResolverInstance::class) {
-							$namespace->addUse(ConnectionTypeResolverInstance::class);
-						}
-					}
-
-					$method->setReturnType(sprintf('%s|%s', $phpResolverType, Deferred::class));
+			foreach ($type->getFields() as $resolver) {
+				$method = $interface->addMethod(sprintf('resolve%s', Strings::firstUpper($resolver->getName())));
+				$method->setPublic();
+				$method->addParameter('data')->setType('mixed');
+				$method->addParameter('context')->setType(Context::class);
+				$method->addParameter('info')->setType(ResolveInfo::class);
+				if (count($resolver->args) > 0) {
+					$requestType = sprintf("App\\ModelGenerated\\Request\\Type\\%sType%sFieldRequest", Strings::firstUpper($type->name), Strings::firstUpper($resolver->getName()));
+					$method->addParameter('request')->setType($requestType);
+					$namespace->addUse($requestType);
 				}
+
+				$resolverType = $resolver->getType();
+				if ($resolverType instanceof NonNull) {
+					$resolverType = $this->getProperType($resolverType);
+				} else {
+					$method->setReturnNullable();
+				}
+
+				if ($resolver->name === 'cursor') {
+					$phpResolverType = Cursor::class;
+					$namespace->addUse(Cursor::class);
+				} else {
+					$phpResolverType = $this->convertReturnTypeToPhpType($resolverType);
+					if ($phpResolverType === ResolverInstance::class) {
+						$namespace->addUse(ResolverInstance::class);
+						$phpResolverType .= '|' . TypeResolver::class;
+					}
+				}
+
+				$method->setReturnType(sprintf('%s|%s', $phpResolverType, Deferred::class));
 			}
 
 			$printed = $printer->printFile($file);

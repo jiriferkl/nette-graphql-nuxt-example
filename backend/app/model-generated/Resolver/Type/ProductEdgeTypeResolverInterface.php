@@ -8,16 +8,17 @@ declare(strict_types=1);
 
 namespace App\ModelGenerated\Resolver\Type;
 
-use App\Model\Graphql\Buffer;
+use App\Model\Graphql\Context;
 use App\Model\Graphql\Cursor;
+use App\Model\Graphql\Resolver\Type\ResolverInstance;
 use App\Model\Graphql\Resolver\Type\TypeResolver;
-use App\Model\Graphql\Resolver\Type\TypeResolverInstance;
 use GraphQL\Deferred;
+use GraphQL\Type\Definition\ResolveInfo;
 
 interface ProductEdgeTypeResolverInterface extends TypeResolver
 {
-	public function resolveCursor(int $id, Buffer $buffer): Cursor|Deferred;
+	public function resolveCursor(mixed $data, Context $context, ResolveInfo $info): Cursor|Deferred;
 
 
-	public function resolveNode(int $id, Buffer $buffer): TypeResolverInstance|Deferred;
+	public function resolveNode(mixed $data, Context $context, ResolveInfo $info): ResolverInstance|TypeResolver|Deferred;
 }

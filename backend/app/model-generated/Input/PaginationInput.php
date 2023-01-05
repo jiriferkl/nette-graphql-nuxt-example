@@ -18,10 +18,13 @@ final readonly class PaginationInput
 
 
 	/**
-	 * @phpstan-param array{first: int|null, after: string|null} $args
+	 * @phpstan-param array{first?: int|null, after?: string|null} $args
 	 */
 	public static function fromArray(array $args): self
 	{
-		return new self(first: $args['first'], after: $args['after']);
+		return new self(
+			first: array_key_exists('first', $args) && !empty($args['first']) ? $args['first'] : null,
+			after: array_key_exists('after', $args) && !empty($args['after']) ? $args['after'] : null,
+		);
 	}
 }

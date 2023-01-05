@@ -2,9 +2,10 @@
 
 namespace App\Model\Graphql\Request;
 
-interface QueryRequest
+interface Request
 {
 
+	/** @param array<mixed> $args */
 	public static function fromArray(array $args): self;
 
 }

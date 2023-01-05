@@ -2,14 +2,14 @@
 
 namespace App\Model\Resolver\Query;
 
+use App\Model\Graphql\Context;
 use App\Model\Graphql\Cursor;
 use App\Model\Graphql\Pagination;
-use App\Model\Graphql\Request\QueryRequest;
-use App\Model\Graphql\Resolver\Type\ConnectionTypeResolverInstance;
+use App\Model\Graphql\Resolver\Type\ResolverInstance;
 use App\ModelGenerated\Request\Query\ProductsQueryRequest;
 use App\ModelGenerated\Resolver\Query\ProductsQueryResolverInterface;
 use App\ModelGenerated\Resolver\Type\ProductConnectionTypeResolverInterface;
-use Exception;
+use GraphQL\Type\Definition\ResolveInfo;
 
 final readonly class ProductsQueryResolver implements ProductsQueryResolverInterface
 {
@@ -18,13 +18,9 @@ final readonly class ProductsQueryResolver implements ProductsQueryResolverInter
 	{
 	}
 
-	public function resolve(QueryRequest $request): ConnectionTypeResolverInstance
+	public function resolve(ProductsQueryRequest $request, Context $context, ResolveInfo $info): ResolverInstance
 	{
-		if (!$request instanceof ProductsQueryRequest) {
-			throw new Exception();
-		}
-
-		return new ConnectionTypeResolverInstance(
+		return new ResolverInstance(
 			$this->productConnectionTypeResolver,
 			new Pagination(
 				first: $request->pagination?->first,

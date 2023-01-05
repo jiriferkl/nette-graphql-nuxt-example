@@ -8,18 +8,23 @@ declare(strict_types=1);
 
 namespace App\ModelGenerated\Resolver\Type;
 
-use App\Model\Graphql\Buffer;
+use App\Model\Graphql\Context;
+use App\Model\Graphql\Resolver\Type\ResolverInstance;
 use App\Model\Graphql\Resolver\Type\TypeResolver;
-use App\Model\Graphql\Resolver\Type\TypeResolverInstance;
 use GraphQL\Deferred;
+use GraphQL\Type\Definition\ResolveInfo;
 
 interface ProductEditionTypeResolverInterface extends TypeResolver
 {
-	public function resolveId(int $id, Buffer $buffer): int|Deferred;
+	public function resolveId(mixed $data, Context $context, ResolveInfo $info): int|Deferred;
 
 
-	public function resolveName(int $id, Buffer $buffer): string|Deferred;
+	public function resolveName(mixed $data, Context $context, ResolveInfo $info): string|Deferred;
 
 
-	public function resolveProduct(int $id, Buffer $buffer): TypeResolverInstance|Deferred;
+	public function resolveProduct(
+		mixed $data,
+		Context $context,
+		ResolveInfo $info,
+	): ResolverInstance|TypeResolver|Deferred;
 }
