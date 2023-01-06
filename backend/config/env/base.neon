@@ -6,3 +6,4 @@ includes:
 	- ../ext/apitte.neon
 	- ../ext/console.neon
 	- ../ext/database.neon
+	- ../ext/elastica.neon

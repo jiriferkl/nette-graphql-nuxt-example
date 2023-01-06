@@ -1,0 +1,7 @@
+extensions:
+	elastica: Contributte\Elastica\DI\ElasticaExtension
+
+elastica:
+	debug: %debugMode%
+	config:
+		host: elastica
