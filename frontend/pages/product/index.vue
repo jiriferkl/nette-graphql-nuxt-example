@@ -1,14 +1,11 @@
 <template>
   <div>
     <div v-if="result && result.products">
-      <NuxtLink v-for="product in result.products.edges" :key="product.node.id" :to="'/product/' + product.node.id">
-        <div>
-          {{ product.node.id }} {{ product.node.name }}
-        </div>
-      </NuxtLink>
+      <div v-for="product in result.products.edges" :key="product.node.id">
+        <ProductCard :product="product.node"/>
+      </div>
       <div>
         <button v-if="result.products.pageInfo.hasNextPage && !loading" @click="loadMore">{{ $t('pages.product.index.loadMore') }}</button>
-        <button v-else disabled>{{ $t('pages.product.index.loadMore') }}</button>
       </div>
     </div>
     <div v-else>Loading..</div>

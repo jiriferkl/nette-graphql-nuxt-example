@@ -43,6 +43,9 @@ export default defineNuxtConfig({
             messages: {
                 cs: {
                     app: {
+                        header: {
+                            search: 'Hledat',
+                        },
                         nav: {
                             homepage: 'Domů',
                             product: 'Produkty',
@@ -63,6 +66,9 @@ export default defineNuxtConfig({
                 },
                 en: {
                     app: {
+                        header: {
+                            search: 'Search',
+                        },
                         nav: {
                             homepage: 'Home',
                             product: 'Products',
