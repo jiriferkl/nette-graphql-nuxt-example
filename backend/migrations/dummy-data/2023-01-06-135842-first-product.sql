@@ -1,0 +1,7 @@
+INSERT INTO studios (id, name) VALUES (1, 'Santa Monica Studio');
+INSERT INTO products (id, name, current_price, original_price, studio_id) VALUES (1, 'God of War', 800.000, 1800.000, 1);
+INSERT INTO products_platforms (id, product_id, platform_id) VALUES (1, 1, 1);
+INSERT INTO products_platforms (id, product_id, platform_id) VALUES (2, 1, 2);
+INSERT INTO products_platforms (id, product_id, platform_id) VALUES (3, 1, 3);
+INSERT INTO products_translations (id, short_description, long_description, product_id, locale) VALUES (1, 'Hra roku 2018', 'V tomto ohromujícím převyprávění klasického příběhu na tebe čeká obtížná a nezvyklá cesta. Vydej se s Kratem na cestu osobního růstu plnou násilí a touhy stát se lepším člověkem kvůli svému synovi. Ve světě plném příšer, draků a bohů leží všechna odpovědnost na tobě – a když je tvůj život plný krve a chaosu, jak můžeš napravit chyby minulosti a ochránit tak svou budoucnost?', 1, 'cs');
+INSERT INTO products_translations (id, short_description, long_description, product_id, locale) VALUES (2, 'Game of the year 2018', 'A difficult and unusual journey awaits you in this stunning retelling of a classic story. Embark with Kratos on a journey of personal growth, filled with violence and a desire to become a better man for his son. In a world full of monsters, dragons, and gods, all the responsibility lies with you - and when your life is full of blood and chaos, how can you right the wrongs of the past to protect your future?', 1, 'en');
