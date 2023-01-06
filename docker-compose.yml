@@ -57,6 +57,18 @@ services:
     networks:
       - frontend
 
+  elastic:
+    image: elasticsearch:8.5.3
+    ports:
+      - "9200:9200"
+    networks:
+      - backend
+    volumes:
+      - ./.docker/temp/elastic:/usr/share/elasticsearch/data
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+
 networks:
   backend:
     driver: bridge
