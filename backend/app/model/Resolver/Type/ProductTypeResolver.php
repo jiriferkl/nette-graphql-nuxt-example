@@ -3,9 +3,11 @@
 namespace App\Model\Resolver\Type;
 
 use App\Model\Graphql\Context;
+use App\Model\Graphql\Resolver\Type\ResolverInstance;
 use App\ModelGenerated\Request\Type\ProductTypeLongDescriptionFieldRequest;
 use App\ModelGenerated\Request\Type\ProductTypeShortDescriptionFieldRequest;
 use App\ModelGenerated\Resolver\Type\ProductTypeResolverInterface;
+use App\ModelGenerated\Resolver\Type\StudioTypeResolverInterface;
 use Exception;
 use GraphQL\Deferred;
 use GraphQL\Type\Definition\ResolveInfo;
@@ -14,7 +16,7 @@ use Nette\Database\Connection;
 final readonly class ProductTypeResolver implements ProductTypeResolverInterface
 {
 
-	public function __construct(private Connection $database)
+	public function __construct(private Connection $database, private StudioTypeResolverInterface $studioTypeResolver)
 	{
 	}
 
@@ -126,12 +128,36 @@ final readonly class ProductTypeResolver implements ProductTypeResolverInterface
 
 	public function resolveDiscount(mixed $id, Context $context, ResolveInfo $info): Deferred
 	{
-		throw new Exception('Not implemented');
+		if (!is_int($id)) {
+			throw new Exception();
+		}
+
+		$type = __METHOD__;
+		$context->buffer->add($type, $id);
+
+		return new Deferred(function () use ($context, $type, $id): float {
+			return $context->buffer->get($type, $id, function (array $ids): array {
+				return $this->database->fetchPairs('SELECT id, ROUND((1 - (current_price / original_price)) * 100) FROM products WHERE id IN (?)', $ids);
+			});
+		});
 	}
 
 	public function resolveStudio(mixed $id, Context $context, ResolveInfo $info): Deferred
 	{
-		throw new Exception('Not implemented');
+		if (!is_int($id)) {
+			throw new Exception();
+		}
+
+		$type = __METHOD__;
+		$context->buffer->add($type, $id);
+
+		return new Deferred(function () use ($context, $type, $id): ResolverInstance {
+			return $context->buffer->get($type, $id, function (array $ids): array {
+				return array_map(function (int $studioId): ResolverInstance {
+					return new ResolverInstance($this->studioTypeResolver, $studioId);
+				}, $this->database->fetchPairs('SELECT id, studio_id FROM products WHERE id IN (?)', $ids));
+			});
+		});
 	}
 
 	public function resolveProductPlatform(mixed $id, Context $context, ResolveInfo $info): Deferred

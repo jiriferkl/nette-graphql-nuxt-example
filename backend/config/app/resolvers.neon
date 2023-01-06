@@ -5,3 +5,4 @@ services:
 	- App\Model\Resolver\Type\ProductConnectionTypeResolver
 	- App\Model\Resolver\Type\ProductEdgeTypeResolver
 	- App\Model\Resolver\Type\ProductTypeResolver
+	- App\Model\Resolver\Type\StudioTypeResolver
