@@ -4,4 +4,4 @@ extensions:
 elastica:
 	debug: %debugMode%
 	config:
-		host: elastica
+		host: elastic

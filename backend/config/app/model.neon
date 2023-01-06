@@ -1,4 +1,8 @@
 services:
+	- App\Model\Elastica\ElasticaIndex
+	- App\Model\Elastica\ProductIndexer
+	- App\Model\Elastica\ProductSearch
+
 	- App\Model\Graphql\GraphqlServer
 	- App\Model\Graphql\GraphqlResolver
 

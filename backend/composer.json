@@ -11,7 +11,8 @@
     "contributte/console": "^0.9.2",
     "nette/php-generator": "^4.0",
     "nextras/migrations": "^3.2",
-    "contributte/elastica": "^1.1"
+    "contributte/elastica": "^1.1",
+    "nette/http": "^3.2"
   },
   "autoload": {
     "psr-4": {

@@ -5,7 +5,7 @@ schema {
 type Query {
   product(id: ID!): Product!
   products(pagination: Pagination): ProductConnection!
-  search(query: String!): ProductConnection!
+  search(query: String!, lang: String!): ProductConnection!
 }
 
 type ProductConnection {

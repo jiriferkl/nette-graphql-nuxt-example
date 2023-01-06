@@ -12,16 +12,18 @@ use App\Model\Graphql\Request\Request;
 
 final readonly class SearchQueryRequest implements Request
 {
-	public function __construct(public string $query)
-	{
+	public function __construct(
+		public string $query,
+		public string $lang,
+	) {
 	}
 
 
 	/**
-	 * @phpstan-param array{query: string} $args
+	 * @phpstan-param array{query: string, lang: string} $args
 	 */
 	public static function fromArray(array $args): self
 	{
-		return new self(query: $args['query']);
+		return new self(query: $args['query'], lang: $args['lang']);
 	}
 }

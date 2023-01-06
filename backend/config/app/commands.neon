@@ -1,4 +1,7 @@
 services:
+	- App\Model\Command\Elastica\ElasticaCreateIndexCommand
+	- App\Model\Command\Elastica\ElasticaProductIndexCommand
+
 	- App\Model\Command\Generator\GraphqlAllGenerator
 	- App\Model\Command\Generator\GraphqlEnumGenerator
 	- App\Model\Command\Generator\GraphqlInputGenerator

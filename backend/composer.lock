@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2f8a9b33053f78b9502d3ef7af8a1acb",
+    "content-hash": "8d6c0ffdcc3dc807d87bbfa2d98f0f1e",
     "packages": [
         {
             "name": "apitte/core",
@@ -1366,6 +1366,84 @@
                 "source": "https://github.com/nette/finder/tree/v2.5.4"
             },
             "time": "2022-10-13T01:30:47+00:00"
+        },
+        {
+            "name": "nette/http",
+            "version": "v3.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nette/http.git",
+                "reference": "0e16cd4f911665679b96bf569318a0dc7f087eda"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nette/http/zipball/0e16cd4f911665679b96bf569318a0dc7f087eda",
+                "reference": "0e16cd4f911665679b96bf569318a0dc7f087eda",
+                "shasum": ""
+            },
+            "require": {
+                "nette/utils": "^3.2.1 || ~4.0.0",
+                "php": ">=7.2 <8.3"
+            },
+            "conflict": {
+                "nette/di": "<3.0.3",
+                "nette/schema": "<1.2"
+            },
+            "require-dev": {
+                "nette/di": "^3.0",
+                "nette/security": "^3.0",
+                "nette/tester": "^2.4",
+                "phpstan/phpstan": "^1.0",
+                "tracy/tracy": "^2.8"
+            },
+            "suggest": {
+                "ext-fileinfo": "to detect type of uploaded files"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.2-dev"
+                }
+            },
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause",
+                "GPL-2.0-only",
+                "GPL-3.0-only"
+            ],
+            "authors": [
+                {
+                    "name": "David Grudl",
+                    "homepage": "https://davidgrudl.com"
+                },
+                {
+                    "name": "Nette Community",
+                    "homepage": "https://nette.org/contributors"
+                }
+            ],
+            "description": "🌐 Nette Http: abstraction for HTTP request, response and session. Provides careful data sanitization and utility for URL and cookies manipulation.",
+            "homepage": "https://nette.org",
+            "keywords": [
+                "cookies",
+                "http",
+                "nette",
+                "proxy",
+                "request",
+                "response",
+                "security",
+                "session",
+                "url"
+            ],
+            "support": {
+                "issues": "https://github.com/nette/http/issues",
+                "source": "https://github.com/nette/http/tree/v3.2.1"
+            },
+            "time": "2022-12-05T00:03:40+00:00"
         },
         {
             "name": "nette/neon",
