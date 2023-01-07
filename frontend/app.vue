@@ -4,7 +4,7 @@
       <div class="bg-black text-neutral-400">
         <div class="container mx-auto flex justify-between items-center py-8 px-2">
           <NuxtLink :to="localePath('/')">Eshop</NuxtLink>
-          <input type="search" class="rounded px-4 py-2 w-1/2 text-slate-600" :placeholder="$t('app.header.search')">
+          <SearchInput />
           <LangSwitcher />
         </div>
       </div>

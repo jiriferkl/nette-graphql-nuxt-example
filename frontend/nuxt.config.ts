@@ -43,9 +43,6 @@ export default defineNuxtConfig({
             messages: {
                 cs: {
                     app: {
-                        header: {
-                            search: 'Hledat',
-                        },
                         nav: {
                             homepage: 'Domů',
                             product: 'Produkty',
@@ -54,6 +51,9 @@ export default defineNuxtConfig({
                     components: {
                         LangSwitcher: {
                             chooseLang: 'Vybrat jazyk'
+                        },
+                        SearchInput: {
+                            placeholder: 'Hledat',
                         },
                     },
                     pages: {
@@ -66,9 +66,6 @@ export default defineNuxtConfig({
                 },
                 en: {
                     app: {
-                        header: {
-                            search: 'Search',
-                        },
                         nav: {
                             homepage: 'Home',
                             product: 'Products',
@@ -77,6 +74,9 @@ export default defineNuxtConfig({
                     components: {
                         LangSwitcher: {
                             chooseLang: 'Change language'
+                        },
+                        SearchInput: {
+                            placeholder: 'Search',
                         },
                     },
                     pages: {
