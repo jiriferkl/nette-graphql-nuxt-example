@@ -10,4 +10,4 @@ migrations:
 	dir: %appDir%/../migrations
 	driver: mysql
 	dbal: nette
-	withDummyData: %debugMode%
+	withDummyData: true # this should be %debugMode% but for simplicity it is true

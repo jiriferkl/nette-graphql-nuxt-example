@@ -40,6 +40,7 @@ services:
       - backend
     volumes:
       - ./.docker/temp/db:/var/lib/mysql
+      - ./.docker/mysql/conf.d:/etc/mysql/conf.d
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: georgina
@@ -68,6 +69,17 @@ services:
     environment:
       - xpack.security.enabled=false
       - discovery.type=single-node
+
+  maxwell:
+    image: zendesk/maxwell:v1.39.4
+    networks:
+      - backend
+    environment:
+      MYSQL_USERNAME: maxwell
+      MYSQL_PASSWORD: maxwell1234
+      MYSQL_HOST: db
+      PRODUCER: stdout
+    command: bash -c 'bin/maxwell --user=$${MYSQL_USERNAME} --password=$${MYSQL_PASSWORD} --host=$${MYSQL_HOST} --producer=$${PRODUCER}'
 
 networks:
   backend:

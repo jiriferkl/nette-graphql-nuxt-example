@@ -1,0 +1,4 @@
+[mysqld]
+binlog_format=row
+server_id=1
+log-bin=master
