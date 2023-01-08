@@ -12,7 +12,8 @@
     "nette/php-generator": "^4.0",
     "nextras/migrations": "^3.2",
     "contributte/elastica": "^1.1",
-    "nette/http": "^3.2"
+    "nette/http": "^3.2",
+    "bunny/bunny": "^0.5.4"
   },
   "autoload": {
     "psr-4": {

@@ -9,3 +9,5 @@ services:
 	- App\Model\Command\Generator\GraphqlQueryResolverGenerator
 	- App\Model\Command\Generator\GraphqlTypeRequestGenerator
 	- App\Model\Command\Generator\GraphqlTypeResolverGenerator
+
+	- App\Model\Command\RabbitMQ\ProductChangesIndexConsumer

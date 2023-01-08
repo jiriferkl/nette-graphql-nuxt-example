@@ -21,6 +21,18 @@ services:
       NETTE_ENV: dev
       NETTE_DEBUG: 0
 
+  product-changes-index-consumer:
+    build:
+      context: .docker/php
+    networks:
+      - backend
+    volumes:
+      - ./backend/:/var/www/html/
+    environment:
+      NETTE_ENV: dev
+      NETTE_DEBUG: 0
+    command: 'bin/console rabbitmq:consumer:product-changes-index'
+
   nginx:
     build:
       context: .docker/nginx
@@ -79,7 +91,7 @@ services:
       MYSQL_PASSWORD: maxwell1234
       MYSQL_HOST: db
       PRODUCER: rabbitmq
-    command: bash -c 'bin/maxwell --user=$${MYSQL_USERNAME} --password=$${MYSQL_PASSWORD} --host=$${MYSQL_HOST} --producer=$${PRODUCER} --rabbitmq_host='rabbitmq''
+    command: bash -c 'bin/maxwell --user=$${MYSQL_USERNAME} --password=$${MYSQL_PASSWORD} --host=$${MYSQL_HOST} --producer=$${PRODUCER} --rabbitmq_host='rabbitmq' --rabbitmq_exchange_type='direct''
 
   rabbitmq:
     image: rabbitmq:management
