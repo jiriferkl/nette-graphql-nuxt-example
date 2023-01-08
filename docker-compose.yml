@@ -78,8 +78,17 @@ services:
       MYSQL_USERNAME: maxwell
       MYSQL_PASSWORD: maxwell1234
       MYSQL_HOST: db
-      PRODUCER: stdout
-    command: bash -c 'bin/maxwell --user=$${MYSQL_USERNAME} --password=$${MYSQL_PASSWORD} --host=$${MYSQL_HOST} --producer=$${PRODUCER}'
+      PRODUCER: rabbitmq
+    command: bash -c 'bin/maxwell --user=$${MYSQL_USERNAME} --password=$${MYSQL_PASSWORD} --host=$${MYSQL_HOST} --producer=$${PRODUCER} --rabbitmq_host='rabbitmq''
+
+  rabbitmq:
+    image: rabbitmq:management
+    ports:
+      - "15672:15672"
+    networks:
+      - backend
+    volumes:
+      - ./.docker/temp/rabbitmq:/var/lib/rabbitmq
 
 networks:
   backend:
